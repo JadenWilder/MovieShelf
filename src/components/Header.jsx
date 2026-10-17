@@ -1,25 +1,57 @@
-import { Link } from 'react-router-dom';
 
-function Header() {
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+function Header({ onSearch }) {
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    onSearch(query.trim());
+    navigate("/");
+  }
+
   return (
     <header className="header">
       <div className="header-content">
-        <Link to="/" className="app-title">MovieShelf</Link>
+        <Link
+          to="/"
+          className="app-title"
+          onClick={() => onSearch("")}
+        >
+          MovieShelf
+        </Link>
+
         <nav className="nav-links">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/favorites" className="nav-link">Favorites</Link>
+          <Link
+            to="/"
+            className="nav-link"
+            onClick={() => onSearch("")}
+          >
+            Home
+          </Link>
+          <Link to="/favorites" className="nav-link">
+            Favorites
+          </Link>
         </nav>
-        <div className="search-container">
-          <input 
-            type="text" 
+
+        <form className="search-container" onSubmit={handleSubmit}>
+          <input
+            type="search"
             placeholder="Search movies..."
             className="search-input"
+            aria-label="Search movies"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
           />
-          <button className="search-button">Search</button>
-        </div>
+          <button type="submit" className="search-button">
+            Search
+          </button>
+        </form>
       </div>
     </header>
   );
-};
+}
 
 export default Header;
