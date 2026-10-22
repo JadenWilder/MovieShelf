@@ -1,14 +1,23 @@
-
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   isFavorite,
   toggleFavorite,
 } from "../services/movieService";
+import { useMovies } from "../contexts/useMovies";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 function MovieCard({ movie }) {
   const [favorite, setFavorite] = useState(() => isFavorite(movie.id));
+
+  const {
+    addMovie,
+    removeMovie,
+    isInWatchlist,
+  } = useMovies();
+
+  const inWatchlist = isInWatchlist(movie.id);
 
   function handleFavoriteClick() {
     try {
@@ -16,6 +25,14 @@ function MovieCard({ movie }) {
       setFavorite(saved);
     } catch {
       window.alert("Unable to update favorites. Please try again.");
+    }
+  }
+
+  function handleWatchlistClick() {
+    if (inWatchlist) {
+      removeMovie(movie.id);
+    } else {
+      addMovie(movie);
     }
   }
 
@@ -29,16 +46,27 @@ function MovieCard({ movie }) {
 
   return (
     <article className="movie-card">
-      <div className="movie-poster">
+      <Link
+        to={`/movie/${movie.id}`}
+        className="movie-poster movie-details-link"
+        aria-label={`View details for ${movie.title}`}
+      >
         <img
           src={posterUrl}
           alt={`${movie.title} poster`}
           loading="lazy"
         />
-      </div>
+      </Link>
 
       <div className="movie-info">
-        <h3 className="movie-title">{movie.title}</h3>
+        <h3 className="movie-title">
+          <Link
+            to={`/movie/${movie.id}`}
+            className="movie-title-link"
+          >
+            {movie.title}
+          </Link>
+        </h3>
 
         <div className="movie-details">
           <span className="movie-rating">
@@ -58,6 +86,17 @@ function MovieCard({ movie }) {
           onClick={handleFavoriteClick}
         >
           {favorite ? "♥ Remove from Favorites" : "♡ Add to Favorites"}
+        </button>
+
+        <button
+          type="button"
+          className={`watchlist-button${inWatchlist ? " watchlisted" : ""}`}
+          aria-pressed={inWatchlist}
+          onClick={handleWatchlistClick}
+        >
+          {inWatchlist
+            ? "✓ Remove from Watchlist"
+            : "+ Add to Watchlist"}
         </button>
       </div>
     </article>

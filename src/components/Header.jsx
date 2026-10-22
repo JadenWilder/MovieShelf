@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,13 +11,18 @@ function Header({ onSearch }) {
     navigate("/");
   }
 
+  function handleHomeClick() {
+    setQuery("");
+    onSearch("");
+  }
+
   return (
     <header className="header">
       <div className="header-content">
         <Link
           to="/"
           className="app-title"
-          onClick={() => onSearch("")}
+          onClick={handleHomeClick}
         >
           MovieShelf
         </Link>
@@ -27,12 +31,17 @@ function Header({ onSearch }) {
           <Link
             to="/"
             className="nav-link"
-            onClick={() => onSearch("")}
+            onClick={handleHomeClick}
           >
             Home
           </Link>
+
           <Link to="/favorites" className="nav-link">
             Favorites
+          </Link>
+
+          <Link to="/watchlist" className="nav-link">
+            Watchlist
           </Link>
         </nav>
 
@@ -45,6 +54,7 @@ function Header({ onSearch }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
+
           <button type="submit" className="search-button">
             Search
           </button>
